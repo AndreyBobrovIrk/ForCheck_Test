@@ -1,0 +1,88 @@
+﻿<Window x:Class="MyVideoPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyVideoPlayer"
+        mc:Ignorable="d"
+        Title="My Video Player" Height="888" Width="1348.38" WindowStartupLocation="CenterScreen" Name="mainWindow"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+>
+  <Grid x:Name="Grid1">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="20">
+      </RowDefinition>
+      <RowDefinition>
+      </RowDefinition>
+      <RowDefinition Height="150">
+      </RowDefinition>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="100*"/>
+      <ColumnDefinition x:Name="m_bookMarkPanel" Width="200"/>
+    </Grid.ColumnDefinitions>
+    <StackPanel HorizontalAlignment="Stretch"  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
+      <Menu HorizontalAlignment="Stretch">
+        <MenuItem Header="File" HorizontalAlignment="Stretch">
+          <MenuItem Header="Open File" Click="MenuItem_OpenClick"/>
+          <Separator/>
+          <MenuItem Header="Close" Click="MenuItem_CloseClick"/>
+        </MenuItem>
+        <MenuItem Header="Help">
+          <MenuItem Header="About" Click="MenuItem_AboutClick"/>
+        </MenuItem>
+      </Menu>
+    </StackPanel>
+    <MediaElement Grid.Row="1" Grid.Column="0" Name="m_player" LoadedBehavior="Manual" UnloadedBehavior="Manual" Stretch="None" MediaOpened="m_player_MediaOpened" ScrubbingEnabled="True" MediaEnded="m_player_MediaEnded"/>
+    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+      <WrapPanel Name="ParentPanel" HorizontalAlignment="Stretch" Margin="0,0,10,0">
+        <Slider Name="m_slider" Panel.ZIndex="-1" Minimum="0" Maximum="0" Value="0" Width="{Binding Path=ActualWidth, ElementName=ParentPanel}" VerticalAlignment="Center" ValueChanged="m_slider_ValueChanged" IsMoveToPointEnabled="True" PreviewMouseRightButtonDown="m_slider_PreviewMouseRightButtonDown">
+          <Slider.ContextMenu>
+            <ContextMenu>
+              <MenuItem Name="AddBookmarkItem" Header="Add Bookmark" Click="AddBookmarkItem_Click" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}"></MenuItem>
+            </ContextMenu>
+          </Slider.ContextMenu>
+        </Slider>
+      </WrapPanel>
+      <WrapPanel HorizontalAlignment="Right" Margin="0,0,10,0">
+        <Label Name="m_progress" HorizontalAlignment="Right">00:00:00/00:00:00</Label>
+      </WrapPanel>
+      <StackPanel>
+        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
+          <Label HorizontalAlignment="Right">Volume</Label>
+          <Slider Name="m_volume" Width="100" Margin="2,5" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}" Maximum="100" Value="100" ValueChanged="m_volume_ValueChanged" />
+          <Label Name="m_lblVolume"  HorizontalAlignment="Right" Width="40">100%</Label>
+        </WrapPanel>
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+          <Button Name="m_btnBegin" Width="50" Click="m_btnBegin_Click" Margin="2,5" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}" >Begin</Button>
+          <Button Name="m_btnPlayPause" Width="50" Click="m_btnPlayPause_Click" Margin="2,5" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}">Play</Button>
+          <Button Name="m_btnStop" Width="50" Click="m_btnStop_Click" Margin="2,5" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}">Stop</Button>
+          <Button Name="m_btnEnd" Width="50" Click="m_btnEnd_Click" Margin="2,5" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}">End</Button>
+        </WrapPanel>
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        </WrapPanel>
+      </StackPanel>
+      <StackPanel>
+        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+          <Button x:Name="m_btnPreviousBookmark" Width="90" Margin="2,5" Content="Previous" Click="m_btnPreviousBookmark_Click" IsEnabled="{Binding ElementName=mainWindow, Path=HasBookmarks}"/>
+          <Button x:Name="m_btnBookMarks" Width="90" Click="m_btnBookMarks_Click" Margin="2,5" HorizontalAlignment="Right" Content="Bookmarks >>" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}"/>
+          <Button x:Name="m_btnNextBookmark" Width="90" Margin="2,5" Content="Next" Click="m_btnNextBookmark_Click" IsEnabled="{Binding ElementName=mainWindow, Path=HasBookmarks}"/>
+        </WrapPanel>
+      </StackPanel>
+    </StackPanel>
+    <DockPanel Grid.Row="1" Grid.Column="1">
+      <TextBlock DockPanel.Dock="Top" Margin="5,0,0,0"  Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">Bookmarks:</TextBlock>
+      <ListBox Name="m_lbBookmarks" ItemsSource="{Binding Bookmarks}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" MouseDoubleClick="m_lbBookmarks_MouseDoubleClick">
+        <ListBox.ContextMenu>
+          <ContextMenu>
+            <MenuItem Name="RemoveBookmarkItem" Header="Remove Bookmark" Click="RemoveBookmarkItem_Click" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}"></MenuItem>
+          </ContextMenu>
+        </ListBox.ContextMenu>
+      </ListBox>
+      <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+        <Button x:Name="m_btnAddBookmark" Width="50" Margin="2,5" Content="Add" Click="m_btnAddBookmark_Click" IsEnabled="{Binding ElementName=mainWindow, Path=IsFileOpened}"/>
+        <Button x:Name="m_btnRemoveBookMark" Width="50" Margin="2,5" HorizontalAlignment="Right" Content="Remove" Click="m_btnRemoveBookMark_Click" IsEnabled="{Binding ElementName=mainWindow, Path=HasBookmarks}"/>
+      </WrapPanel>
+    </DockPanel>
+  </Grid>
+</Window>
