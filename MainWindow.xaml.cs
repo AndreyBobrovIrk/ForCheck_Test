@@ -81,7 +81,6 @@ namespace MyVideoPlayer
       {
         case PlayerState.Play:
           {
-
             if(m_player.Position.Ticks != 0 && (
               m_player.NaturalDuration == Duration.Automatic || m_player.Position == m_player.NaturalDuration.TimeSpan)
             ) {
